@@ -1,25 +1,21 @@
 % Modelo de Circuito LRC de ordem 2
 % Alexandre Galdino da Nóbrega
 % Métodos Numéricos: Heun e RK-4 
-  crc; clear;
-% Modelo de Circuito LRC de ordem 2
-% Alexandre Galdino da Nóbrega
-% Métodos Numéricos: Heun e RK-4 
   clc; clear;
 
 % COEFICIENTES
-R = 345 * 10^-5; %Elemento de Resistência em Ohm
-L =  10 * 10^-2; %Elemento de Indutância em Henry
-C = 1 ^ 10^-1; % Elemento de Capacitância em Coulomb
+R = 172 * 10^-4; %Elemento de Resistência em Ohm 
+L =  1 * 10^-7; %Elemento de Indutância em Henry 
+C = 1 * 10^-5; % Elemento de Capacitância em Faraday
 
 % EDO da Tensão. Lei de Kitchkoff com fator seno 
 EDO = @(t, q, tx_ic, tx2_ic) ...
-      ( ( ( 1 / C) + tx2_ic ) + (L * tx_ic) + (R * q)) * (2 * sin(1000*t));
+      ( ( ( 1 / C) + tx2_ic ) + (L * tx_ic) + (R * q)) % * sin(1000*t);
 
 % EIXO DO TEMPO
-h = 0.01; % passo
+h = 0.0001; % passo
 a = 0; % valor inicial do intervalo
-b = 1; % valor final do intervalo 
+b = 5; % valor final do intervalo 
 n = (b - a) / h; % quantidade de iterações
 
 % VALORES INICIAIS
@@ -45,6 +41,8 @@ end
 figure(1);
 subplot(311);
 plot(t, q, '-r');
+legend('Método Numérico: Heun');
+subtitle('Carga elétrica x tempo: Coulomb x s ');
 grid on;
 
 %MÉTODO DE RK-4
@@ -69,4 +67,6 @@ end;
  
  subplot(312);
  plot(t, q, '-b');
+ legend('Método: RK-4');
+ subtitle('Carga Elétrica x tempo (Coulomb x s)');
  grid on;
