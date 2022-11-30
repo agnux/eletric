@@ -2,66 +2,71 @@
 % Alexandre Galdino da Nóbrega
 % Métodos Numéricos: Heun e RK-4 
   crc; clear;
+% Modelo de Circuito LRC de ordem 2
+% Alexandre Galdino da Nóbrega
+% Métodos Numéricos: Heun e RK-4 
+  clc; clear;
 
 % COEFICIENTES
-R = 345 * 10^-5; Elemento de Resistência em Ohm
-L =  10 * 10^-2; Elemento de Indutância em Henry
-C =  10 * -1; Elemento de Capacitância em Coulomb
+R = 345 * 10^-5; %Elemento de Resistência em Ohm
+L =  10 * 10^-2; %Elemento de Indutância em Henry
+C = 1 ^ 10^-1; % Elemento de Capacitância em Coulomb
 
-% EDO da Tensão. Lei de Kitchkoff
-EDO = @(t, ic, tx_ic, tx2_ic) ...
-      ( ( 1 / C) + tx2_ic ) + (L * tx_ic) + (R * ic);
+% EDO da Tensão. Lei de Kitchkoff com fator seno 
+EDO = @(t, q, tx_ic, tx2_ic) ...
+      ( ( ( 1 / C) + tx2_ic ) + (L * tx_ic) + (R * q)) * (2 * sin(1000*t));
 
 % EIXO DO TEMPO
-h = 0.0000015; % passo
+h = 0.01; % passo
 a = 0; % valor inicial do intervalo
-b = 3; % valor final do intervalo 
+b = 1; % valor final do intervalo 
 n = (b - a) / h; % quantidade de iterações
 
 % VALORES INICIAIS
-h = 0.0000015;
-tn= 3;
-n = (tn - t0) / 3;
-t(1) = a; ic(1) = 0; % ic é a corrente do condutor elétrico
+t(1) = a; q(1) = 0; % q é a carga elétrica 
 tx_ic(1) = 0; % tx_ic é a taxa da corrente do condutor
 tx2_ic(1) = 0;  % tx2_ic é a taxa de segunda ordem da corrente do condutor
 
 % MÉTODO DE HEUN
 k1 = 0; k2 = 0; 
+fprintf("Heun metodo:\n");
 for j=1:n
    t(j+1) = t(j) + h;
-   k1 = EDO( t(j) , ic(j), tx_ic(j), tx2_ic(j) );
-   k2 = EDO( (t(j) + h / 2), ic(j) + h * (k1 / 2) , tx_ic(j) + h * (k1 / 2) , ...
+   k1 = EDO( t(j) , q(j), tx_ic(j), tx2_ic(j) );
+   k2 = EDO( (t(j) + h / 2), q(j) + h * (k1 / 2) , tx2_ic(j) + h * (k1 / 2) , ...
         tx2_ic(j) + h * ( k1 / 2 ) );
  
-   ic(i+1)    = ic(i) + ( h / 2 ) * (k1 + k2);
-   tx_ic(i+1) = tx_ic(i) + (h / 2) * (k1 + k2);
-   tx2_ic(i+1)= tx2_ic(i) + (h / 2) * (k1 + k2);
-end;
+   q(j+1)    = q(j) + ( h / 2 ) * (k1 + k2);
+   tx_ic(j+1) = tx_ic(j) + (h / 2) * (k1 + k2);
+   tx2_ic(j+1)= tx2_ic(j) + (h / 2) * (k1 + k2);
+   fprintf("%.5f \t %.5f\t\n", t(j), q(j));
+end
 
 figure(1);
 subplot(311);
-plot(t, ic, '-r');
+plot(t, q, '-r');
 grid on;
 
 %MÉTODO DE RK-4
 k1 = 0; k2 = 0; k3 = 0; k4 = 0;
-ic(1) = 0; tx_ic(1) = 0; tx2_ic(1) = 0;
-
-for i=1:n
-    t(i+1) = t(i) + h;
-    k1 = h * EDO( t(j), ic(j), tx_ic(j), tx2_ic(j) );
-    k2 = h * EDO( t(j) + (h / 2), (ic(j) + (k1 / 2) ), ...
+t(1)=0;
+q(1) = 0; tx_ic(1) = 0; tx2_ic(1) = 0;
+fprintf("RK-4 t(j)  ic(j)\n");
+for j=1:n
+    t(j+1) = t(j) + h;
+    k1 = h * EDO( t(j), q(j), tx_ic(j), tx2_ic(j) );
+    k2 = h * EDO( t(j) + (h / 2), (q(j) + (k1 / 2) ), ...
          tx_ic(j) + (k1 / 2), tx2_ic(j) + (k1 / 2) );
-    k3 = h * EDO( t(j) + (h / 2), ic(j) + ( k2 / 2), ...
+    k3 = h * EDO( t(j) + (h / 2), q(j) + ( k2 / 2), ...
          tx_ic(j) + (k2 /2), tx2_ic(j) + (k2 / 2) );
-    k4 = h * EDO( t(j+1), ic(j) + k3, tx_ic(j) + k3, tx2_ic(j) + k3 );
+    k4 = h * EDO( t(j+1), q(j) + k3, tx_ic(j) + k3, tx2_ic(j) + k3 );
     
-    ic(j+1)   = ic(j) + (k1 + 2 * k2 + 2 * k3 + k4 ) / 6;
+    ic(j+1)   = q(j) + (k1 + 2 * k2 + 2 * k3 + k4 ) / 6;
     tx_ic(j+1)= tx_ic(j) + (k1 + 2 * k2 + 2 * k3 + k4) / 6;
     tx2_ic(j+1)=tx2_ic(j)+ (k1 + 2 * k2 + 2 * k3 + k4) / 6;
- end;
+    fprintf("%.5f\t %.5f\t\n", t(j), ic(j));
+end;
  
  subplot(312);
- plot(t, ic, '-b');
+ plot(t, q, '-b');
  grid on;
