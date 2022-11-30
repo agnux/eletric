@@ -4,9 +4,9 @@
   clc; clear;
 
 % COEFICIENTES
-R = 172 * 10^-4; %Elemento de Resistência em Ohm 
-L =  1 * 10^-7; %Elemento de Indutância em Henry 
-C = 1 * 10^-5; % Elemento de Capacitância em Faraday
+R = 127 * 10^-6; %Elemento de Resistência em Ohm 345 * 10^5
+L =  1 * 10^-7; %Elemento de Indutância em Henry 10* 10^-2
+C = 133 * 10^-3; % Elemento de Capacitância em Far 1 ^10^-1
 
 % EDO da Tensão. Lei de Kitchkoff com fator seno 
 EDO = @(t, q, tx_ic, tx2_ic) ...
@@ -42,7 +42,7 @@ figure(1);
 subplot(311);
 plot(t, q, '-r');
 legend('Método Numérico: Heun');
-subtitle('Carga elétrica x tempo: Coulomb x s ');
+subtitle('Carga elétrica x tempo: Coulomb / s ');
 grid on;
 
 %MÉTODO DE RK-4
