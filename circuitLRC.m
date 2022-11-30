@@ -50,4 +50,18 @@ ic(1) = 0; tx_ic(1) = 0; tx2_ic(1) = 0;
 
 for i=1:n
     t(i+1) = t(i) + h;
-    k1 = h * EDO(
+    k1 = h * EDO( t(j), ic(j), tx_ic(j), tx2_ic(j) );
+    k2 = h * EDO( t(j) + (h / 2), (ic(j) + (k1 / 2) ), ...
+         tx_ic(j) + (k1 / 2), tx2_ic(j) + (k1 / 2) );
+    k3 = h * EDO( t(j) + (h / 2), ic(j) + ( k2 / 2), ...
+         tx_ic(j) + (k2 /2), tx2_ic(j) + (k2 / 2) );
+    k4 = h * EDO( t(j+1), ic(j) + k3, tx_ic(j) + k3, tx2_ic(j) + k3 );
+    
+    ic(j+1)   = ic(j) + (k1 + 2 * k2 + 2 * k3 + k4 ) / 6;
+    tx_ic(j+1)= tx_ic(j) + (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+    tx2_ic(j+1)=tx2_ic(j)+ (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+ end;
+ 
+ subplot(312);
+ plot(t, ic, '-b');
+ grid on;
