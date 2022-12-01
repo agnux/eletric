@@ -5,9 +5,9 @@
 
 % COEFICIENTES
 R = 12;  
-L = 2;  
-C = 1; 
-Valimentacao = 10; % 10 volts
+L = 0.25;  
+C = 0.1; 
+Valimentacao = 12; %  volts
 
 % EDO da Tensão. 
 EDO = @(t, fluxo_i, tx_fluxo_i, tx2_fluxo_i) ...
@@ -54,7 +54,7 @@ fprintf("RK-4 t(j)  ic(j)\n");
 for j=1:n
     t(j+1) = t(j) + h;
     k1 = h * EDO( t(j), fluxo_i(j), tx_fluxo_i(j), tx2_fluxo_i(j) );
-    k2 = h * EDO( t(j) + (h / 2), (fluxo(j) + (k1 / 2) ), ...
+    k2 = h * EDO( t(j) + (h / 2), (fluxo_i(j) + (k1 / 2) ), ...
          tx_fluxo_i(j) + (k1 / 2), tx2_fluxo_i(j) + (k1 / 2) );
     k3 = h * EDO( t(j) + (h / 2), fluxo_i(j) + ( k2 / 2), ...
          tx_fluxo_i(j) + (k2 /2), tx2_fluxo_i(j) + (k2 / 2) );
